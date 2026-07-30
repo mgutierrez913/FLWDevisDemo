@@ -3,100 +3,101 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Fort Leonard Wood Digital Tour — Demo</title>
-  <meta name="description" content="Demonstration of the Fort Leonard Wood self-guided digital tour progressive web app.">
-  <!-- Open-source mapping library (matches Technical Volume: MapLibre GL JS) -->
+  <title>Fort Leonard Wood Digital Tour — The Engineer Post (Demo)</title>
+  <meta name="description" content="Demonstration of the Fort Leonard Wood self-guided digital tour — 'The Engineer Post' progressive web app.">
+  <meta name="theme-color" content="#221F20">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- ===== Demo control bar (not part of the app itself) ===== -->
+  <!-- Demo control bar (not part of the app) -->
   <div class="demo-bar">
-    <strong>Fort Leonard Wood Digital Tour</strong>
+    <strong>The Engineer Post</strong>
     <span class="tag">DEMO</span>
-    <span class="hint">Proposed platform &middot; Devis &middot; RFQ1821563</span>
+    <span class="hint">FLW Digital Tour &middot; Devis &middot; RFQ1821563</span>
     <span class="spacer"></span>
     <span class="hint">View as:</span>
-    <button data-device="ios" class="active">iOS phone</button>
+    <button data-device="ios" class="active">iOS</button>
     <button data-device="android">Android</button>
-    <button data-device="desktop">Desktop / web</button>
+    <button data-device="desktop">Desktop</button>
     <button id="demo-share">Share / QR</button>
   </div>
 
-  <!-- ===== The application ===== -->
-  <div class="stage phone ios" id="stage">
+  <div class="stage ios" id="stage">
     <div class="device">
+      <div class="app">
+        <div class="views">
+          <section class="view active dark" id="v-tours"></section>
+          <section class="view dark" id="v-detail"></section>
 
-      <!-- App header -->
-      <header class="app-head">
-        <div class="logo">
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.8 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg>
-        </div>
-        <div class="titles"><b>FORT LEONARD WOOD</b><span>DIGITAL TOUR</span></div>
-        <div class="h-actions">
-          <button id="h-search">
-            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3a6.5 6.5 0 10-.7.7l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0a4.5 4.5 0 110-9 4.5 4.5 0 010 9z"/></svg> Search
-          </button>
-          <button id="h-menu">
-            <svg viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg> Menu
-          </button>
-        </div>
-      </header>
-
-      <!-- Views -->
-      <main class="app-body">
-        <section class="view active" id="view-home"></section>
-        <section class="view" id="view-tours"></section>
-
-        <section class="view" id="view-map">
-          <div class="map-wrap">
+          <section class="view dark" id="v-map">
             <div id="map"></div>
-            <div class="map-tour-switch">
-              <button data-mtour="history" class="active">History</button>
-              <button data-mtour="engineer">Engineer</button>
+            <div class="map-filters">
+              <button class="fchip active" data-filter="all">All stops</button>
+              <button class="fchip" data-filter="memorials">Memorials</button>
+              <button class="fchip" data-filter="museums">Museums</button>
+              <button class="fchip" data-filter="parking">Parking</button>
             </div>
-            <div class="map-overlay-card" id="map-card" style="display:none"></div>
-            <button class="map-toggle" id="list-toggle">List view</button>
-            <div class="list-alt" id="list-alt"><div id="list-alt-body"></div></div>
+            <div class="map-toggle">
+              <button class="active" data-maplist="map">Map</button>
+              <button data-maplist="list">List</button>
+            </div>
+            <div class="drive-progress" id="drive-progress" style="display:none"></div>
+            <div class="drive-card" id="drive-card"></div>
+            <div class="map-list" id="map-list"></div>
+            <div class="sheet half" id="sheet">
+              <div class="grab" id="sheet-grab"></div>
+              <div class="sheet-body" id="sheet-body"></div>
+            </div>
+          </section>
+
+          <section class="view" id="v-poi"></section>
+          <section class="view dark" id="v-search"></section>
+          <section class="view" id="v-near"></section>
+        </div>
+
+        <!-- overlays -->
+        <div class="arrival" id="arrival"></div>
+        <div class="player-screen" id="v-player"></div>
+
+        <div class="mini" id="mini">
+          <div class="art"></div>
+          <div class="info"><b id="mini-title">Narration</b><div class="m" id="mini-time">PLAYING</div></div>
+          <button class="p" id="mini-play" aria-label="Play/Pause"></button>
+        </div>
+
+        <nav class="tabbar">
+          <button data-view="tours" class="active"><svg viewBox="0 0 24 24"><path d="M4 5h16v3H4zm0 6h16v3H4zm0 6h10v3H4z"/></svg><span class="lbl">Tours</span></button>
+          <button data-view="map"><svg viewBox="0 0 24 24"><path d="M12 3l4 2 4-2v14l-4 2-8-4-4 2V5l4-2 4 2zm0 2.2L8 3.9v11.9l4 2z"/></svg><span class="lbl">Map</span></button>
+          <button data-view="search"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3a6.5 6.5 0 10-.7.7l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0a4.5 4.5 0 110-9 4.5 4.5 0 010 9z"/></svg><span class="lbl">Search</span></button>
+          <button data-view="near"><svg viewBox="0 0 24 24"><path d="M21 3L3 10.5l7.2 2.3L12.5 20 21 3z"/></svg><span class="lbl">Near Me</span></button>
+        </nav>
+
+        <!-- location priming -->
+        <div class="prime" id="prime">
+          <div class="illus"><div class="rings"><div><div></div></div></div></div>
+          <span class="kick on-dark">Before we ask</span>
+          <h2>Use your location to find nearby stops?</h2>
+          <p>Your location is used <b>on your device</b> to find the closest stops and to play narration when you arrive. It is never sent to a server and nothing is stored.</p>
+          <div class="reassure">Everything works without location — you can browse tours, read every stop, and search the full index.</div>
+          <div class="p-actions">
+            <button class="btn btn-primary" id="prime-enable">Enable location</button>
+            <button class="btn btn-outline-dark" id="prime-cancel">Continue without location</button>
           </div>
-        </section>
+        </div>
 
-        <section class="view" id="view-search"></section>
-        <section class="view" id="view-near"></section>
-        <section class="view" id="view-detail"></section>
-
-        <!-- geofence / toast -->
-        <div class="geo-toast" id="geo-toast"></div>
-      </main>
-
-      <!-- Bottom nav -->
-      <nav class="tabbar">
-        <button data-view="tours">
-          <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"/></svg> Tours
-        </button>
-        <button data-view="map">
-          <svg viewBox="0 0 24 24"><path d="M15 4l-6 2-6-2v16l6 2 6-2 6 2V4l-6 2zm-6 2.5l6 2v9.5l-6-2z"/></svg> Map
-        </button>
-        <button data-view="search">
-          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3a6.5 6.5 0 10-.7.7l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0a4.5 4.5 0 110-9 4.5 4.5 0 010 9z"/></svg> Search
-        </button>
-        <button data-view="near">
-          <svg viewBox="0 0 24 24"><path d="M12 2a8 8 0 00-8 8c0 5.2 8 12 8 12s8-6.8 8-12a8 8 0 00-8-8zm0 11a3 3 0 110-6 3 3 0 010 6z"/></svg> Near Me
-        </button>
-        <button data-view="home">
-          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg> Info
-        </button>
-      </nav>
-
-      <!-- Modal -->
-      <div class="modal-mask" id="modal-mask"><div class="modal" id="modal-body"></div></div>
-
+        <div class="offline-banner" id="offline">OFFLINE — VIEWING SAVED CONTENT. ALL STOPS AVAILABLE.</div>
+        <div class="mask" id="mask"><div class="modal" id="modal-body"></div></div>
+      </div>
     </div>
   </div>
 
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script src="data.js?v=2"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>

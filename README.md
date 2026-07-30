@@ -1,94 +1,57 @@
-# Fort Leonard Wood Digital Tour — Interactive Demo
+# Fort Leonard Wood Digital Tour — "The Engineer Post" (Demo)
 
-A working, clickable demonstration of the self-guided digital tour platform proposed
-in Devis's Technical Volume for **RFQ1821563 — Create and Maintain FLW Tour Visualization**.
+A working demonstration of the self-guided digital tour platform proposed by Devis for
+**RFQ1821563 — Create and Maintain FLW Tour Visualization**.
 
-It is a **progressive web app (PWA)**: it runs in any modern browser, on phone, tablet,
-or desktop, with **no download, no account, and no personal data collected** — exactly the
-model described in the proposal.
+This version recreates the **"Monument"** design direction from the design handoff, on the
+official **U.S. Army palette**:
 
----
+- **Army Gold** `#FFCC01` — accents and primary actions
+- **Army Black** `#221F20` — dark chrome, headers, primary text
+- **White** `#FFFFFF` — cards and sheets
 
-## How to run it
+It is a mobile-first **progressive web app**: opens from a public URL or QR code, **no app
+store, no account, no registration, no personal data collected**. Location is optional and
+processed on the device.
 
-**Option A — just open the file (simplest):**
-1. Double-click `index.html`. It opens in your default browser.
-2. An internet connection is recommended the first time so the interactive map can load
-   its open-source (OpenStreetMap) tiles. Everything else works offline; if the map can't
-   reach the internet it automatically offers the **List view** of all stops.
+## Run it
 
-**Option B — serve it locally (most reliable, mirrors production):**
-```bash
-cd "07_Demo Site"
-python -m http.server 8080
-```
-Then open `http://localhost:8080` in your browser. (Any static file server works.)
+Open `index.html` in a browser (internet recommended so the map tiles and web fonts load).
+Or serve the folder: `python -m http.server 8080` → `http://localhost:8080`.
 
-**To demo on a phone:** serve it with Option B on your laptop, then open the laptop's
-IP address (e.g. `http://192.168.x.x:8080`) on a phone on the same Wi-Fi, or use the
-**iOS phone / Android** toggles in the gray demo bar to show the mobile mock-up on screen.
+Live: **https://mgutierrez913.github.io/FLWDevisDemo/**
 
----
+## Walkthrough
 
-## What to click (a 3-minute walkthrough)
-
-1. **Home** — leads with the history of Fort Leonard Wood, then the two tours. Note the
-   privacy-first banner.
-2. **Start a Tour → Map** — interactive map with numbered points of interest, the tour
-   route line, and a stop card. Toggle **History / Engineer** to switch tours. Use
-   **List view** to see the accessible, no-map alternative.
-3. **View Details** on any stop — opens the point-of-interest page: Overview / History /
-   Media / Directions tabs, a **Listen to Narration** player (click ▶ — it reads aloud
-   using the browser), a geofence indicator, and nearby stops.
-4. **Search** — try `Sapper Grove`, a memorial name, `museum`, or a deliberate typo like
-   `brdging gallery`. Search is fuzzy, typo-tolerant, and runs in the browser.
-5. **Near Me** — enable location (optional) and click **Simulate driving the tour** to see
-   geofence prompts fire and narration auto-start as you "arrive" at each stop.
-6. **Share / QR** (top-right of the demo bar) — the QR/link access path.
-7. **View as: iOS phone / Android / Desktop** (demo bar) — the same app, responsive across
-   devices (the SOW's mock-up requirement).
-
-> The gray bar at the very top is **demo scaffolding only** (device switcher, QR). It is
-> not part of the delivered application.
-
----
-
-## How the demo maps to the SOW
-
-| SOW requirement | Where to see it in the demo |
-|---|---|
-| Cross-platform, responsive; **no software download** (2.1.e.f) | iOS / Android / Desktop toggles; runs in-browser |
-| History of the installation + **≥ 2 customizable tours**, one framework (2.1) | Home history section; History & Engineer tours |
-| Interactive map, POIs (**NTE 100**), click for info that can be **read to the user** (2.1.b) | Map view; POI detail with narration player |
-| **Up to 50 POIs per tour**, flexible content structure (2.1.e.a/b) | Structured POI content model in `data.js` |
-| Specialized **search** — names at Sapper Grove, museum displays (2.1.e.c) | Search view (people index + exhibit index) |
-| **Multimedia** — embedded/linked video, leadership messages (2.1.e.d) | Media tab; external-link privacy prompt |
-| **Wayfinding & geofencing** on every POI, autoplay at locations (2.1.e.e) | Directions tab; Near Me geofence simulation |
-| **No download / cross-platform** accessibility (2.1.e.f) | PWA; add-to-home-screen; responsive |
-| **Privacy & security** — no PII, no accounts (2.1.e.h, 10.1, 14.1) | Privacy banner; no login anywhere; feedback stores nothing |
-| **Mock-up for Android and iOS** (2.1.f) | View-as device toggles |
-| **Available 24/7 via app/website link** (2.1.g) | Public link + QR share |
-| **Accessibility** (public-facing) | List-view map alternative, narration, captions notes, 508/WCAG badge |
-
----
+- **Tours (landing)** — "The Engineer Post" hero, intro narration, the two tours.
+- **Tour detail** — route, stop list, and the **START TOUR & ENABLE NARRATION** gesture
+  (unlocks audio for the whole tour, as browsers require).
+- **Map** — dark MapLibre map, gold route + numbered markers, ALL STOPS / MEMORIALS /
+  MUSEUMS / PARKING filters, Map/List toggle (508 alternative), draggable bottom sheet.
+- **POI detail** — narration module, transcript, gallery, nearby stops, Navigate CTA, Report an issue.
+- **Search** — typo-tolerant (`brdging`, `harriso`), grouped: People (Sapper Grove index),
+  Museum Exhibits, Places, Tours, with match highlighting.
+- **Near Me** — distance-sorted with compass bearings; location priming screen.
+- **Player** — full-screen with scrubber, ±15s, speed, and auto-scrolling transcript.
+- **Driving / geofence** — "Navigate to this stop" runs a simulated drive with arrival cards.
+- **View as: iOS / Android / Desktop** (demo bar) — responsive across devices.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | Page shell, header, bottom nav, device frame |
-| `styles.css` | All styling (palette matches the Technical Volume mockups) |
-| `data.js` | Tours, POIs, museum-exhibit and memorial search indexes |
-| `app.js` | All interactivity: views, map, search, narration, geofencing |
+| `index.html` | Shell, fonts, device frame, view containers, overlays |
+| `styles.css` | "Monument" design system on the Army palette |
+| `data.js` | Tours, stops, transcripts, search indexes |
+| `app.js` | Views, map, narration/player, search, Near Me, geofence + driving sim |
+| `uploads/` | Four supplied Fort Leonard Wood photos |
 
-**Technology:** vanilla HTML/CSS/JS + **MapLibre GL JS** (the open-source mapping library
-named in the Technical Volume) rendering **OpenStreetMap** open-source tiles.
+**Tech:** vanilla HTML/CSS/JS · MapLibre GL JS (OpenStreetMap / CARTO dark tiles) ·
+Bodoni Moda + Archivo + IBM Plex Mono (Google Fonts).
 
----
+## Demonstration content
 
-## Important: this is a demonstration
-
-All historical text, imagery, audio, names, museum exhibits, memorial entries, and map
-coordinates in this demo are **notional placeholders** created to show how the platform
-behaves. Per the SOW, in production **all content is provided and approved by Fort Leonard
-Wood**. Names shown under "Person / Memorial" are fictional and clearly labeled "(Notional)".
+All history, imagery, audio, names, exhibits, and coordinates are **notional placeholders**.
+Per the SOW, in production all content is provided and approved by Fort Leonard Wood. Memorial
+names in the Sapper Grove index are fictional and labeled "close match"/notional. Striped
+panels mark imagery not yet supplied (e.g., the 1941 archival hero).
